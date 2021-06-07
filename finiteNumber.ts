@@ -1,9 +1,10 @@
 import { logger } from "./log.ts";
 import { ntob } from "./utils.ts";
 
-export const fnFactory = (prime: number | bigint) => (num: number | bigint) => new FiniteNum(ntob(num), ntob(prime))
+export const fnFactory = (prime: number | bigint) =>
+  (num: number | bigint) => new FiniteNum(ntob(num), ntob(prime));
 
-export class FiniteNum {
+export class FiniteNum<T extends {} = {}> {
   public num: bigint;
   public prime: bigint;
 
@@ -21,31 +22,31 @@ export class FiniteNum {
 
   public print = () => {
     logger.info(`prime:${this.prime} num:${this.num}`);
-  }
+  };
 
-  public eq = (other: FiniteNum) => {
+  public eq = (other: FiniteNum<T>) => {
     return this.num === other.num && this.prime === other.prime;
   };
 
   public eqZero = () => {
-    return this.num === 0n
-  }
+    return this.num === 0n;
+  };
 
-  public add = (other: FiniteNum | bigint) => {
+  public add = (other: FiniteNum<T> | bigint) => {
     if (typeof other === "bigint") {
-      return new FiniteNum((this.num + other) % this.prime, this.prime)
+      return new FiniteNum<T>((this.num + other) % this.prime, this.prime);
     }
 
     if (this.prime != other.prime) {
       throw new Error("Cannot add two Elements with different prime");
     }
 
-    return new FiniteNum((this.num + other.num) % this.prime, this.prime);
+    return new FiniteNum<T>((this.num + other.num) % this.prime, this.prime);
   };
 
-  public sub = (other: FiniteNum | bigint) => {
+  public sub = (other: FiniteNum<T> | bigint) => {
     if (typeof other === "bigint") {
-      return new FiniteNum((this.num - other) % this.prime, this.prime)
+      return new FiniteNum<T>((this.num - other) % this.prime, this.prime);
     }
 
     if (this.prime != other.prime) {
@@ -53,19 +54,19 @@ export class FiniteNum {
     }
 
     const n = (this.num - other.num) % this.prime;
-    return new FiniteNum(n >= 0 ? n : n + this.prime, this.prime);
+    return new FiniteNum<T>(n >= 0 ? n : n + this.prime, this.prime);
   };
 
-  public mul = (other: FiniteNum | bigint) => {
+  public mul = (other: FiniteNum<T> | bigint) => {
     if (typeof other === "bigint") {
-      return new FiniteNum((this.num * other) % this.prime, this.prime)
+      return new FiniteNum<T>((this.num * other) % this.prime, this.prime);
     }
 
     if (this.prime != other.prime) {
       throw new Error("Cannot multiply two Elements with different prime");
     }
 
-    return new FiniteNum((this.num * other.num) % this.prime, this.prime);
+    return new FiniteNum<T>((this.num * other.num) % this.prime, this.prime);
   };
 
   public pow = (exp: number | bigint) => {
@@ -74,19 +75,19 @@ export class FiniteNum {
       n += this.prime - 1n;
     }
 
-    return new FiniteNum((this.num ** n) % this.prime, this.prime);
+    return new FiniteNum<T>((this.num ** n) % this.prime, this.prime);
   };
 
-  public div = (other: FiniteNum | bigint) => {
+  public div = (other: FiniteNum<T> | bigint) => {
     if (typeof other === "bigint") {
-      return new FiniteNum((this.num / other) % this.prime, this.prime)
+      return new FiniteNum<T>((this.num / other) % this.prime, this.prime);
     }
 
     if (this.prime != other.prime) {
       throw new Error("Cannot divide two Elements with different prime");
     }
 
-    return new FiniteNum(
+    return new FiniteNum<T>(
       (this.num * other.pow(this.prime - 2n).num) % this.prime,
       this.prime,
     );
