@@ -1,2 +1,4 @@
 # dbtc
-btc client implemented in deno
+btc client implemented in deno 
+
+under development
